@@ -2,12 +2,15 @@ package domain
 
 import javax.naming.SizeLimitExceededException
 
-data class MineMap(var mapOrography: List<List<Boolean>>) {
+data class MineMap(var mapOrography: MutableList<MutableList<Boolean>>) {
+    private val height: Int
+    private val width: Int
+    var lastUnsureStepInAFork: Position? = null
 
-    private val height:Int
-    private val width:Int
     init {
-        if ((mapOrography.isEmpty()) or (mapOrography[0].isEmpty()))
+        if (mapOrography.isEmpty()) {
+            throw SizeLimitExceededException("Map empty")
+        } else if (mapOrography[0].isEmpty())
             throw SizeLimitExceededException("Map empty")
         else {
             height = mapOrography[0].size
@@ -15,8 +18,6 @@ data class MineMap(var mapOrography: List<List<Boolean>>) {
             if (widthExceeded() or heightExceeded())
                 throw SizeLimitExceededException("Map too big")
         }
-
-
     }
 
     var escapePath = mutableListOf<Directions>()
@@ -26,26 +27,46 @@ data class MineMap(var mapOrography: List<List<Boolean>>) {
             throw SizeLimitExceededException("Miner Out Of Map")
         return true
     }
+    fun isMinerPlacedInCorrectSquare(position: Position): Boolean {
+        if (!isInMap(position))
+            throw SizeLimitExceededException("Miner Out Of Map")
+        if(minerPlacedAtIncorrectSquare(position))
+            throw Exception("Miner placed out of the path")
+        return true
+    }
 
-    fun exploreNextStep(lastMovement: Directions, position: Position): Directions {
-        var newPositionToExploreUp = position.up()
-        var newPositionToExploreDown = position.down()
-        var newPositionToExploreRight = position.right()
-        var newPositionToExploreLeft = position.left()
+    private fun minerPlacedAtIncorrectSquare(position: Position) = !mapOrography[position.x][position.y]
+
+    fun exploreNextStep(lastMovement: Directions, position: Position): List<Directions> {
+
+        var directionsAvailableAtPosition = addAvailableDirections(lastMovement, position)
+
+        notPathAvailableReturnNULLDirection(directionsAvailableAtPosition)
+
+        return directionsAvailableAtPosition
 
 
-        return if (notTurnDown(lastMovement) and positionFree(newPositionToExploreDown))
-            Directions.DOWN
-        else if (notTurnUp(lastMovement) and positionFree(newPositionToExploreUp))
-            Directions.UP
-        else if (notTurnRight(lastMovement) and positionFree(newPositionToExploreRight))
-            Directions.RIGHT
-        else if (notTurnLeft(lastMovement) and positionFree(newPositionToExploreLeft))
-            Directions.LEFT
-        else
-            Directions.NULL
+    }
 
+    private fun addAvailableDirections(
+        lastMovement: Directions,
+        position: Position
+    ):MutableList<Directions> {
+        var directionsAvailableAtPosition: MutableList<Directions> = mutableListOf()
+        if (notTurnDown(lastMovement) and positionFree(position.down()))
+            directionsAvailableAtPosition.add(Directions.DOWN)
+        if (notTurnUp(lastMovement) and positionFree(position.up()))
+            directionsAvailableAtPosition.add(Directions.UP)
+        if (notTurnRight(lastMovement) and positionFree(position.right()))
+            directionsAvailableAtPosition.add(Directions.RIGHT)
+        if (notTurnLeft(lastMovement) and positionFree(position.left()))
+            directionsAvailableAtPosition.add(Directions.LEFT)
+        return directionsAvailableAtPosition
+    }
 
+    private fun notPathAvailableReturnNULLDirection(directionsAvailableAtPosition: MutableList<Directions>) {
+        if (directionsAvailableAtPosition.size == 0)
+            directionsAvailableAtPosition.add(Directions.NULL)
     }
 
     private fun notTurnRight(lastMovement: Directions) = (lastMovement != Directions.LEFT)

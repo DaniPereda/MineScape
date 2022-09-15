@@ -17,18 +17,15 @@ import kotlin.test.assertFailsWith
 internal class MineExplorerServiceImplTest {
     private val mockConsoleOutputAdapter = mock<OutputAdapter>()
 
-
-
-
     @Test
     fun `all ok`(){
         //GIVEN
-        var mineMap =listOf(
-            listOf(true, false, true, true, true),
-            listOf(true, true, true, false, true),
-            listOf(false, false, false, true, true),
-            listOf(false, false, false, true, false),
-            listOf(false, false, true, true, false),
+        var mineMap =mutableListOf(
+            mutableListOf(true, false, true, true, true),
+            mutableListOf(true, true, true, false, true),
+            mutableListOf(false, false, false, true, true),
+            mutableListOf(false, false, false, true, false),
+            mutableListOf(false, false, true, true, false),
         )
 
         var resultToCheck = mutableListOf<Directions>(Directions.RIGHT, Directions.UP, Directions.UP, Directions.LEFT, Directions.UP, Directions.UP, Directions.RIGHT, Directions.RIGHT, Directions.DOWN)
@@ -47,12 +44,12 @@ internal class MineExplorerServiceImplTest {
     @Test
     fun `exit not reachable`(){
         //GIVEN
-        var mineMap =listOf(
-            listOf(true, false, true, true, true),
-            listOf(true, true, true, false, true),
-            listOf(false, false, false, true, true),
-            listOf(false, false, false, true, false),
-            listOf(false, false, true, true, false),
+        var mineMap =mutableListOf(
+            mutableListOf(true, false, true, true, true),
+            mutableListOf(true, true, true, false, true),
+            mutableListOf(false, false, false, true, true),
+            mutableListOf(false, false, false, true, false),
+            mutableListOf(false, false, true, true, false),
         )
 
         var minerPosition = Position(0,0)
@@ -76,12 +73,12 @@ internal class MineExplorerServiceImplTest {
     fun `path with forks - need con come back`()
     {
         //GIVEN
-        var mineMap =listOf(
-            listOf(true, false, true, true, true),
-            listOf(true, true, true, false, true),
-            listOf(true, false, false, true, true),
-            listOf(true, true, false, true, false),
-            listOf(true, false, false, true, false),
+        var mineMap =mutableListOf(
+            mutableListOf(true, false, true, true, true),
+            mutableListOf(true, true, true, false, true),
+            mutableListOf(true, false, false, true, true),
+            mutableListOf(true, true, false, true, false),
+            mutableListOf(true, false, false, true, false),
         )
 
         var resultToCheck = mutableListOf<Directions>(Directions.RIGHT, Directions.UP, Directions.UP, Directions.LEFT, Directions.UP, Directions.UP, Directions.RIGHT, Directions.RIGHT, Directions.DOWN)

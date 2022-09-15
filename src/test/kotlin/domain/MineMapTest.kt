@@ -7,12 +7,12 @@ import kotlin.test.assertFailsWith
 class MineMapTest {
     @Test
     fun `too much columns`(){
-        var testMineMap =listOf(
-            listOf(true, false, true, true, true, true),
-            listOf(true, false, true, true, true, true),
-            listOf(true, true, true, false, true, true),
-            listOf(false, false, false, true, true, true),
-            listOf(false, false, false, true, false, true))
+        var testMineMap =mutableListOf(
+            mutableListOf(true, false, true, true, true, true),
+            mutableListOf(true, false, true, true, true, true),
+            mutableListOf(true, true, true, false, true, true),
+            mutableListOf(false, false, false, true, true, true),
+            mutableListOf(false, false, false, true, false, true))
 
         assertFailsWith<SizeLimitExceededException>(
             message = "Map too big",
@@ -24,13 +24,13 @@ class MineMapTest {
 
     @Test
     fun `too much rows`(){
-        var testMineMap =listOf(
-            listOf(true, false, true, true, true),
-            listOf(true, false, true, true, true),
-            listOf(true, true, true, false, true),
-            listOf(false, false, false, true, true),
-            listOf(false, false, false, true, false),
-            listOf(false, false, false, true, false)
+        var testMineMap =mutableListOf(
+            mutableListOf(true, false, true, true, true),
+            mutableListOf(true, false, true, true, true),
+            mutableListOf(true, true, true, false, true),
+            mutableListOf(false, false, false, true, true),
+            mutableListOf(false, false, false, true, false),
+            mutableListOf(false, false, false, true, false)
         )
 
         assertFailsWith<SizeLimitExceededException>(
@@ -43,7 +43,7 @@ class MineMapTest {
 
     @Test
     fun `map empty`(){
-        var testMineMap = emptyList<List<Boolean>>()
+        var testMineMap = mutableListOf<MutableList<Boolean>>()
 
         assertFailsWith<SizeLimitExceededException>(
             message = "Map empty",
@@ -55,9 +55,9 @@ class MineMapTest {
 
     @Test
     fun `miner out of Map exceeded cols`(){
-        var testMineMap =listOf(
-            listOf(true, false),
-            listOf(true, false)
+        var testMineMap =mutableListOf(
+            mutableListOf(true, false),
+            mutableListOf(true, false)
         )
 
         assertFailsWith<SizeLimitExceededException>(
@@ -70,9 +70,9 @@ class MineMapTest {
 
     @Test
     fun `miner out of Map exceeded rows`(){
-        var testMineMap =listOf(
-            listOf(true, false),
-            listOf(true, false)
+        var testMineMap =mutableListOf(
+            mutableListOf(true, false),
+            mutableListOf(true, false)
         )
 
         assertFailsWith<SizeLimitExceededException>(
@@ -85,9 +85,9 @@ class MineMapTest {
 
     @Test
     fun `miner out of Map negative row position`(){
-        var testMineMap =listOf(
-            listOf(true, false),
-            listOf(true, false)
+        var testMineMap =mutableListOf(
+            mutableListOf(true, false),
+            mutableListOf(true, false)
         )
 
         assertFailsWith<SizeLimitExceededException>(
@@ -100,15 +100,30 @@ class MineMapTest {
 
     @Test
     fun `miner out of Map negative columns position`(){
-        var testMineMap =listOf(
-            listOf(true, false),
-            listOf(true, false)
+        var testMineMap =mutableListOf(
+            mutableListOf(true, false),
+            mutableListOf(true, false)
         )
 
         assertFailsWith<SizeLimitExceededException>(
             message = "Miner Out Of Map",
             block = {
                 MineMap(testMineMap).isMinerInMap(Position(1,-1))
+            }
+        )
+    }
+
+    @Test
+    fun `Miner placed out of the path`(){
+        var testMineMap =mutableListOf(
+            mutableListOf(true, false),
+            mutableListOf(true, false)
+        )
+
+        assertFailsWith<Exception>(
+            message = "Miner placed out of the path",
+            block = {
+                MineMap(testMineMap).isMinerPlacedInCorrectSquare(Position(0,1))
             }
         )
     }
